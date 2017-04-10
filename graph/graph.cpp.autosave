@@ -1,0 +1,4 @@
+#include "graph.h"
+Graph(unsigned ord=0){
+    ordre=
+}
