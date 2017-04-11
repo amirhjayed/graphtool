@@ -11,6 +11,7 @@ class VertexView : public QGraphicsItem
 public:
     QRectF boundingRect() const;
     VertexView(QPointF position);
+    QPointF getPosi(){return posi;}
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QPainterPath shape () const;
 protected:

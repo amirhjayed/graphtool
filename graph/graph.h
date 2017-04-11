@@ -4,6 +4,8 @@
 #include "vertexview.h"
 #include "arcview.h"
 #include <vector>
+#include <QGraphicsItem>
+#include <QPointF>
 #include <utility>
 #include <tuple>
 
@@ -17,10 +19,12 @@ class Graph
     unsigned date;
     unsigned ordre;
     matrix adjMatrix;
-    vertexVect vertexs;
-public:
-    Graph(unsigned ord=0);
 
+public:
+    Graph();
+    vertexVect vertexTuples;
+
+    QGraphicsItem *getItem(QPointF clickPos);
     unsigned getDate(){return date;}
     unsigned getOrdre(){return ordre;}
     void setDate(unsigned d){date=d;}

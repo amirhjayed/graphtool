@@ -15,11 +15,12 @@ public:
     enum mode {NA,addVertex,deleteVertex,addArc,deleteArc};
     void mousePressEvent(QMouseEvent *event);
     void scrollContentsBy(int,int);
+    ~Canvas();
 public slots:
     void setMode(mode m);
 private:
     QGraphicsScene *scene;
-    Graph *graphModel;
+    Graph graphModel;
     mode currentMode;
 };
 #endif // CANVAS_H

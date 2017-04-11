@@ -1,8 +1,8 @@
 #include "vertex.h"
-
+#include <limits>
 Vertex::Vertex(){
     parent=nullptr;
-    distance=100000;
+    distance=numeric_limits<unsigned>::max();
     color=0;
 }
 Vertex::Vertex(const Vertex &v){
