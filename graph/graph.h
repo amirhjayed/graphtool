@@ -25,7 +25,8 @@ public:
     vertexVect vertexTuples;
 
     VertexView *getItem(QPointF clickPos);
-    bool Collision(QPointF newVertexPos);
+    QPointF Collision(QPointF newVertexPos);
+    QPointF avoidCollisonPoint(QPointF p1, QPointF p2);
     unsigned getDate(){return date;}
     unsigned getOrdre(){return ordre;}
     void setDate(unsigned d){date=d;}

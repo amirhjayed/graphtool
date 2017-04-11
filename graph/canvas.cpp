@@ -23,10 +23,10 @@ Canvas::Canvas(QWidget *parent) : QGraphicsView(parent)
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
         QPointF p=mapToScene(event->pos());
-        qDebug()<<p;
         if(currentMode==addVertex){
             if(event->button() == Qt::LeftButton){
-                if(!graphModel.Collision(p)){
+                qDebug()<<graphModel.Collision(p).isNull();
+                if(graphModel.Collision(p).isNull()==true){
                     VertexView *vertexItem = new VertexView(p);
                     vertexTuple _vertex ;
                     std::get<0>(_vertex) = Vertex() ;
@@ -65,13 +65,14 @@ void Canvas::mouseMoveEvent(QMouseEvent *event){
 
 void Canvas::mouseReleaseEvent(QMouseEvent *event){
     if (currentMode==NA){
-        QPointF p=mapToScene(event->pos());
-        qDebug()<<"releaseEvent "<<p;
-        VertexView *clickedItem=graphModel.getItem(p);
+        QPointF releasePoint=mapToScene(event->pos());
+        qDebug()<<"releaseEvent "<<releasePoint;
+        VertexView *clickedItem=graphModel.getItem(releasePoint);
         if(clickedItem){
-        if(graphModel.Collision(p)){
-                qDebug()<<"Collision "<<p;
-                clickedItem->setPosi(p+QPointF(50,50));
+        QPointF collisionPoint;
+        if((collisionPoint=graphModel.Collision(releasePoint)).isNull()==false){
+                qDebug()<<"Collision "<<releasePoint;
+                clickedItem->setPosi(graphModel.avoidCollisonPoint(collisionPoint,releasePoint));
                 scene->removeItem(clickedItem);
                 scene->addItem(clickedItem);
                 scene->update();

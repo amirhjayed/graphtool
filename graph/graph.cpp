@@ -1,5 +1,6 @@
 #include "graph.h"
 #include <cmath>
+#include <QDebug>
 #include "vertexview.h"
 Graph::Graph(){
 }
@@ -20,12 +21,21 @@ VertexView *Graph::getItem(QPointF clickPos){
     return nullptr;
 }
 
-bool Graph::Collision(QPointF newVertexPos){
-    for(vertexTuple &_vertexTuple : vertexTuples){
+QPointF Graph::Collision(QPointF newVertexPos){
+    for(vertexTuple &_vertexTuple : vertexTuples)
+    {
         VertexView *itemView = std::get<1>(_vertexTuple);
         QPointF itemPos=itemView->getPosi();
-        if(distanceBetween(itemPos,newVertexPos)<60.0)
-            return true;
+        if(itemPos!=newVertexPos){  qDebug()<<itemPos;
+            if(distanceBetween(itemPos,newVertexPos)<60.0)
+                return itemPos;}
     }
-    return false;
+
+    return QPointF(0.0,0.0);
+}
+
+QPointF Graph::avoidCollisonPoint(QPointF p1, QPointF p2){
+    QLineF line(p1,p2);
+
+    //line.setP2(a);
 }
