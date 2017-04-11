@@ -20,12 +20,12 @@ VertexView *Graph::getItem(QPointF clickPos){
     return nullptr;
 }
 
-bool Graph::noCollision(QPointF newVertexPos){
+bool Graph::Collision(QPointF newVertexPos){
     for(vertexTuple &_vertexTuple : vertexTuples){
         VertexView *itemView = std::get<1>(_vertexTuple);
         QPointF itemPos=itemView->getPosi();
-        if(distanceBetween(itemPos,newVertexPos)<60)
-            return false;
+        if(distanceBetween(itemPos,newVertexPos)<60.0)
+            return true;
     }
-    return true;
+    return false;
 }

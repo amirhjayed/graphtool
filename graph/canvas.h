@@ -15,6 +15,7 @@ public:
     enum mode {NA,addVertex,deleteVertex,addArc,deleteArc};
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void scrollContentsBy(int,int);
     ~Canvas();
 public slots:

@@ -26,7 +26,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
         qDebug()<<p;
         if(currentMode==addVertex){
             if(event->button() == Qt::LeftButton){
-                if(graphModel.noCollision(p)){
+                if(!graphModel.Collision(p)){
                     VertexView *vertexItem = new VertexView(p);
                     vertexTuple _vertex ;
                     std::get<0>(_vertex) = Vertex() ;
@@ -52,17 +52,31 @@ void Canvas::mouseMoveEvent(QMouseEvent *event){
         QPointF p=mapToScene(event->pos());
         VertexView *clickedItem=graphModel.getItem(p);
         if(clickedItem!=nullptr){
-            qDebug()<<"entre";
-            if(graphModel.noCollision(p)){
                 clickedItem->setPosi(p);
+                scene->removeItem(clickedItem);
+                scene->addItem(clickedItem);
+                scene->update();
+        }
+        else
+            qDebug()<<"nullptr";
+        update();
+    }
+}
+
+void Canvas::mouseReleaseEvent(QMouseEvent *event){
+    if (currentMode==NA){
+        QPointF p=mapToScene(event->pos());
+        qDebug()<<"releaseEvent "<<p;
+        VertexView *clickedItem=graphModel.getItem(p);
+        if(clickedItem){
+        if(graphModel.Collision(p)){
+                qDebug()<<"Collision "<<p;
+                clickedItem->setPosi(p+QPointF(50,50));
                 scene->removeItem(clickedItem);
                 scene->addItem(clickedItem);
                 scene->update();
             }
         }
-        else
-            qDebug()<<"nullptr";
-        update();
     }
 }
 void Canvas::scrollContentsBy(int, int){
