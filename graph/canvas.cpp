@@ -49,37 +49,47 @@ void Canvas::mousePressEvent(QMouseEvent *event)
 
 void Canvas::mouseMoveEvent(QMouseEvent *event){
     if (currentMode==NA){
-        QPointF p=mapToScene(event->pos());
-        VertexView *clickedItem=graphModel.getItem(p);
-        if(clickedItem!=nullptr){
-                clickedItem->setPosi(p);
-                scene->removeItem(clickedItem);
-                scene->addItem(clickedItem);
-                scene->update();
+        if(event->buttons()==Qt::LeftButton){
+            QPointF movePoint=mapToScene(event->pos());
+            VertexView *clickedItem=graphModel.getItem(movePoint);
+            if(clickedItem!=nullptr){
+                QPointF collisionPoint;
+                if((collisionPoint=graphModel.Collision(movePoint)).isNull()==false){
+                    clickedItem->setPosi(graphModel.avoidCollisonPoint(collisionPoint,movePoint));
+                    scene->removeItem(clickedItem);
+                    scene->addItem(clickedItem);
+                    scene->update();
+                }
+                else{
+                    clickedItem->setPosi(movePoint);
+                    scene->removeItem(clickedItem);
+                    scene->addItem(clickedItem);
+                    scene->update();
+                }
+            }
+            update();
         }
-        else
-            qDebug()<<"nullptr";
-        update();
     }
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent *event){
     if (currentMode==NA){
+        if(event->button()==Qt::LeftButton){
         QPointF releasePoint=mapToScene(event->pos());
-        qDebug()<<"releaseEvent "<<releasePoint;
         VertexView *clickedItem=graphModel.getItem(releasePoint);
         if(clickedItem){
-        QPointF collisionPoint;
-        if((collisionPoint=graphModel.Collision(releasePoint)).isNull()==false){
-                qDebug()<<"Collision "<<releasePoint;
-                clickedItem->setPosi(graphModel.avoidCollisonPoint(collisionPoint,releasePoint));
-                scene->removeItem(clickedItem);
-                scene->addItem(clickedItem);
-                scene->update();
+                QPointF collisionPoint;
+                if((collisionPoint=graphModel.Collision(releasePoint)).isNull()==false){
+                        clickedItem->setPosi(graphModel.avoidCollisonPoint(collisionPoint,releasePoint));
+                        scene->removeItem(clickedItem);
+                        scene->addItem(clickedItem);
+                        scene->update();
+                }
             }
         }
     }
 }
+
 void Canvas::scrollContentsBy(int, int){
     //don't do anything hah!
 }

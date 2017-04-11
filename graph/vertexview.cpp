@@ -2,6 +2,8 @@
 #include <QPainter>
 #include <QGraphicsView>
 #include <QDebug>
+#include <string>
+#include <QTextItem>
 #include "graphtool.h"
 QRectF VertexView::boundingRect() const
 {
@@ -10,8 +12,7 @@ QRectF VertexView::boundingRect() const
 
 VertexView::VertexView(QPointF pos){
     posi=pos;
-    setFlag(ItemIsMovable,true);
-    setFlag(ItemIsSelectable,true);
+    name="VAA";
 }
 
 
@@ -20,7 +21,12 @@ void VertexView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QPen pen(Qt::black);
     pen.setWidth(2);
     painter->setPen(pen);
+    string text=name;
+    int textLength=name.length();
+    int decalage=-4*textLength;
     painter->drawEllipse(posi,20,20);
+    QString qText=QString::fromStdString(text);
+    painter->drawText(posi+QPoint(decalage,5),qText);
 }
 
 QPainterPath VertexView::shape() const{

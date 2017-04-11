@@ -15,20 +15,20 @@ VertexView *Graph::getItem(QPointF clickPos){
     for(vertexTuple &_vertexTuple : vertexTuples){
         VertexView *itemView = std::get<1>(_vertexTuple);
         QPointF itemPos=itemView->getPosi();
-        if(distanceBetween(itemPos,clickPos)<20)
+        if(distanceBetween(itemPos,clickPos)<21)
             return itemView;
     }
     return nullptr;
 }
 
 QPointF Graph::Collision(QPointF newVertexPos){
-    for(vertexTuple &_vertexTuple : vertexTuples)
-    {
+    for(vertexTuple &_vertexTuple : vertexTuples){
         VertexView *itemView = std::get<1>(_vertexTuple);
         QPointF itemPos=itemView->getPosi();
-        if(itemPos!=newVertexPos){  qDebug()<<itemPos;
+        if(distanceBetween(itemPos,newVertexPos)>20){
             if(distanceBetween(itemPos,newVertexPos)<60.0)
-                return itemPos;}
+                return itemPos;
+        }
     }
 
     return QPointF(0.0,0.0);
@@ -36,6 +36,9 @@ QPointF Graph::Collision(QPointF newVertexPos){
 
 QPointF Graph::avoidCollisonPoint(QPointF p1, QPointF p2){
     QLineF line(p1,p2);
-
-    //line.setP2(a);
+    float alpha=line.length()/60.0;
+    float a=line.dx()/alpha+line.x1();
+    float b=line.dy()/alpha+line.y1();
+    line.setP2(QPointF(a,b));
+    return line.p2();
 }
