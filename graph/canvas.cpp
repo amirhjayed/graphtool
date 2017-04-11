@@ -26,14 +26,15 @@ void Canvas::mousePressEvent(QMouseEvent *event)
         qDebug()<<p;
         if(currentMode==addVertex){
             if(event->button() == Qt::LeftButton){
-                VertexView *vertexItem = new VertexView(p);
-
-                vertexTuple _vertex;
-                std::get<0>(_vertex) = Vertex() ;
-                std::get<1>(_vertex) = vertexItem ;
-                graphModel.vertexTuples.push_back(_vertex);
-                scene->addItem(vertexItem);
-                scene->update();
+                if(graphModel.noCollision(p)){
+                    VertexView *vertexItem = new VertexView(p);
+                    vertexTuple _vertex ;
+                    std::get<0>(_vertex) = Vertex() ;
+                    std::get<1>(_vertex) = vertexItem ;
+                    graphModel.vertexTuples.push_back(_vertex);
+                    scene->addItem(vertexItem);
+                    scene->update();
+                }
             }
         }
         if(currentMode==deleteVertex){
@@ -44,6 +45,25 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                 scene->update();
             }
         }
+}
+
+void Canvas::mouseMoveEvent(QMouseEvent *event){
+    if (currentMode==NA){
+        QPointF p=mapToScene(event->pos());
+        VertexView *clickedItem=graphModel.getItem(p);
+        if(clickedItem!=nullptr){
+            qDebug()<<"entre";
+            if(graphModel.noCollision(p)){
+                clickedItem->setPosi(p);
+                scene->removeItem(clickedItem);
+                scene->addItem(clickedItem);
+                scene->update();
+            }
+        }
+        else
+            qDebug()<<"nullptr";
+        update();
+    }
 }
 void Canvas::scrollContentsBy(int, int){
     //don't do anything hah!

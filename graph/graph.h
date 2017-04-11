@@ -24,7 +24,8 @@ public:
     Graph();
     vertexVect vertexTuples;
 
-    QGraphicsItem *getItem(QPointF clickPos);
+    VertexView *getItem(QPointF clickPos);
+    bool noCollision(QPointF newVertexPos);
     unsigned getDate(){return date;}
     unsigned getOrdre(){return ordre;}
     void setDate(unsigned d){date=d;}

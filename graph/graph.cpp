@@ -10,7 +10,7 @@ int distanceBetween(QPointF pos1,QPointF pos2){
 
     return d;
 }
-QGraphicsItem *Graph::getItem(QPointF clickPos){
+VertexView *Graph::getItem(QPointF clickPos){
     for(vertexTuple &_vertexTuple : vertexTuples){
         VertexView *itemView = std::get<1>(_vertexTuple);
         QPointF itemPos=itemView->getPosi();
@@ -18,4 +18,14 @@ QGraphicsItem *Graph::getItem(QPointF clickPos){
             return itemView;
     }
     return nullptr;
+}
+
+bool Graph::noCollision(QPointF newVertexPos){
+    for(vertexTuple &_vertexTuple : vertexTuples){
+        VertexView *itemView = std::get<1>(_vertexTuple);
+        QPointF itemPos=itemView->getPosi();
+        if(distanceBetween(itemPos,newVertexPos)<60)
+            return false;
+    }
+    return true;
 }

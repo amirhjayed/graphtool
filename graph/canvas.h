@@ -14,6 +14,7 @@ public:
     explicit Canvas(QWidget *parent = 0);
     enum mode {NA,addVertex,deleteVertex,addArc,deleteArc};
     void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
     void scrollContentsBy(int,int);
     ~Canvas();
 public slots:
