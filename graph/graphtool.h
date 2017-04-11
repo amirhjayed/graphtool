@@ -35,6 +35,8 @@ private slots:
 
     void on_actionAdd_Vertex_triggered(bool checked);
 
+    void on_actionNavigation_triggered();
+
 signals:
     void changedMode(mode newMode);
 private:

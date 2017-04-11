@@ -44,6 +44,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNavigation"/>
+   <addaction name="separator"/>
    <addaction name="actionAdd_Vertex"/>
    <addaction name="actionDelete_Vertex"/>
    <addaction name="separator"/>
@@ -57,6 +59,7 @@
    <addaction name="actionBellman_ford"/>
    <addaction name="separator"/>
    <addaction name="actionMatrice_d_adjacence"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="toolBar">
@@ -167,6 +170,17 @@
   <action name="actionCon_tac">
    <property name="text">
     <string>Contact</string>
+   </property>
+  </action>
+  <action name="actionNavigation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Navigation</string>
+   </property>
+   <property name="toolTip">
+    <string>Navigation mode to move and select objects</string>
    </property>
   </action>
  </widget>

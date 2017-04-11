@@ -10,8 +10,7 @@ QRectF VertexView::boundingRect() const
 
 VertexView::VertexView(QPointF pos){
     posi=pos;
-    setFlag(ItemIsMovable);
-    setFlag(ItemIsSelectable);
+    setFlag(ItemIsMovable,true);
 }
 
 
