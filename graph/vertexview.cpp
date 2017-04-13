@@ -10,9 +10,9 @@ QRectF VertexView::boundingRect() const
     return QRectF(posi.x()-20.0,posi.y()+20,40.0,40.0);
 }
 
-VertexView::VertexView(QPointF pos){
+VertexView::VertexView(QPointF pos, std::string _name){
     posi=pos;
-    name="VAA";
+    name=_name;
 }
 
 

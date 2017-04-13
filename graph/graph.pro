@@ -28,14 +28,14 @@ SOURCES += main.cpp\
     vertex.cpp \
     vertexview.cpp \
     arcview.cpp \
-    graph.cpp \
-    canvas.cpp
+    canvas.cpp \
+    graph.cpp
 
 HEADERS  += graphtool.h \
     vertex.h \
-    graph.h \
     vertexview.h \
     arcview.h \
-    canvas.h
+    canvas.h \
+    graph.h
 
 FORMS    += graphtool.ui

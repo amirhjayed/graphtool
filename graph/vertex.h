@@ -2,10 +2,10 @@
 #define VERTEX_H
 
 #include <string>
+#include <vertexview.h>
 using namespace std;
 class Vertex
 {
-    string name ;
     Vertex *parent;
     unsigned distance  ;
     unsigned debTime ;
@@ -16,13 +16,11 @@ public:
     Vertex(Vertex* ,unsigned, unsigned);
     Vertex(const Vertex &);
 
-    string getName(){return name;}
     unsigned getDistancce(){return distance;}
     unsigned getDebTime(){return debTime;}
     unsigned getEndTime(){return endTime;}
     unsigned getColor(){return color;}
 
-    void setName(string n){name=n;}
     void setDistance(unsigned d){distance=d;}
     void setDebTime(unsigned dt){debTime=dt;}
     void setEndTime(unsigned et){endTime=et;}

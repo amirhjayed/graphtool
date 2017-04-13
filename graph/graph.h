@@ -25,19 +25,23 @@ public:
     vertexVect vertexTuples;
 
     VertexView *getItem(QPointF clickPos);
-    QPointF Collision(QPointF newVertexPos);
+    vertexTuple *getVertexTuple(QPointF clickPos);
+    QPointF CollisionAdd(QPointF newVertexPos);
+    QPointF CollisionMove(QPointF newVertexPos);
     QPointF avoidCollisonPoint(QPointF p1, QPointF p2);
+    ArcView *getArcView(vertexTuple *fromVertexTuple,QPointF toVertexPos);
+    vertexTuple *getTupleFromVertex(Vertex* vertex);
+
     unsigned getDate(){return date;}
     unsigned getOrdre(){return ordre;}
     void setDate(unsigned d){date=d;}
     void setOrdre(unsigned o){ordre=o;}
 
-    void addVertex(Vertex &);
     void delVertex();
-    bool vertexExist();
+    void delVertex(VertexView* vertexItem);
 
     void addArc();
-    void delArc();
+    void deleteArc();
     bool arcExist();
 
     void createAdjMatrix();

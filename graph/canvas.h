@@ -5,7 +5,6 @@
 #include "graph.h"
 #include "vertex.h"
 #include "graph.h"
-#include <QGraphicsSceneMouseEvent>
 
 class Canvas : public QGraphicsView
 {
@@ -15,7 +14,7 @@ public:
     enum mode {NA,addVertex,deleteVertex,addArc,deleteArc};
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
+    //void mouseReleaseEvent(QMouseEvent *event);
     void scrollContentsBy(int,int);
     ~Canvas();
 public slots:
@@ -24,5 +23,8 @@ private:
     QGraphicsScene *scene;
     Graph graphModel;
     mode currentMode;
+    QPointF fromVertexPos;
+    bool firstClick;
+    vertexTuple *fromVertexTuple;
 };
 #endif // CANVAS_H

@@ -32,9 +32,6 @@ private slots:
 
     void on_actionDelete_arc_triggered();
 
-
-    void on_actionAdd_Vertex_triggered(bool checked);
-
     void on_actionNavigation_triggered();
 
 signals:
@@ -44,5 +41,6 @@ private:
     Canvas *myCanvas;
 
 };
+
 
 #endif // GRAPHTOOL_H
