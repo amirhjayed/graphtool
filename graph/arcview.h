@@ -6,6 +6,8 @@
 #include <QPointF>
 #include <QColor>
 
+
+
 class ArcView : public QGraphicsItem
 {
     QPointF *fromPos;

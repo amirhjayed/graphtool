@@ -10,16 +10,18 @@ QRectF VertexView::boundingRect() const
     return QRectF(posi.x()-20.0,posi.y()+20,40.0,40.0);
 }
 
-VertexView::VertexView(QPointF pos, std::string _name){
+VertexView::VertexView(QPointF pos, std::string _name, QColor _color, int _width){
     posi=pos;
     name=_name;
+    color=_color;
+    width=_width;
 }
 
 
 void VertexView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QPen pen(Qt::black);
-    pen.setWidth(2);
+    QPen pen(color);
+    pen.setWidth(width);
     painter->setPen(pen);
     string text=name;
     int textLength=name.length();

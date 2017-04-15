@@ -55,7 +55,7 @@
    <addaction name="actionBFS"/>
    <addaction name="actionDfS"/>
    <addaction name="separator"/>
-   <addaction name="actionDujkstra"/>
+   <addaction name="actionDijkstra"/>
    <addaction name="actionBellman_ford"/>
    <addaction name="separator"/>
    <addaction name="actionMatrice_d_adjacence"/>
@@ -135,26 +135,47 @@
    </property>
   </action>
   <action name="actionBFS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>BFS</string>
    </property>
+   <property name="toolTip">
+    <string>Broad First search</string>
+   </property>
   </action>
   <action name="actionDfS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>DFS</string>
    </property>
    <property name="toolTip">
-    <string>DFS</string>
+    <string>Depth First Search</string>
    </property>
   </action>
-  <action name="actionDujkstra">
+  <action name="actionDijkstra">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Dijkstra</string>
    </property>
+   <property name="toolTip">
+    <string>Shortest path (Dijkstra Algorithm)</string>
+   </property>
   </action>
   <action name="actionBellman_ford">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Bellman-ford</string>
+   </property>
+   <property name="toolTip">
+    <string>Shortest path(Bellman-ford Algorithm)</string>
    </property>
   </action>
   <action name="actionMatrice_d_adjacence">

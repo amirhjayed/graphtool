@@ -2,12 +2,14 @@
 #define GRAPH_H
 #include "vertex.h"
 #include "vertexview.h"
-#include "arcview.h"
+
 #include <vector>
 #include <QGraphicsItem>
 #include <QPointF>
 #include <utility>
 #include <tuple>
+#include <queue>
+#include "arcview.h"
 
 using vertexSuccessor = tuple<Vertex*, int ,ArcView*>;
 using vertexTuple = tuple<Vertex, VertexView*,vector<vertexSuccessor>>;
@@ -19,17 +21,21 @@ class Graph
     unsigned date;
     unsigned ordre;
     matrix adjMatrix;
+    vertexTuple *currentTuple_BFS;
+    vector<vertexSuccessor>::iterator currentSuccessor_BFS;
+    vector<vertexSuccessor> *currentSuccessorVect_BFS;
 
 public:
-    Graph();
     vertexVect vertexTuples;
+    queue<vertexTuple*> queue_BFS ;
 
+    Graph();
     VertexView *getItem(QPointF clickPos);
     vertexTuple *getVertexTuple(QPointF clickPos);
     QPointF CollisionAdd(QPointF newVertexPos);
     QPointF CollisionMove(QPointF newVertexPos);
     QPointF avoidCollisonPoint(QPointF p1, QPointF p2);
-    ArcView *getArcView(vertexTuple *fromVertexTuple,QPointF toVertexPos);
+    ArcView *getArcView(vertexTuple *fromVertexTuple, vertexTuple *toVertexPos);
     vertexTuple *getTupleFromVertex(Vertex* vertex);
 
     unsigned getDate(){return date;}
@@ -37,23 +43,14 @@ public:
     void setDate(unsigned d){date=d;}
     void setOrdre(unsigned o){ordre=o;}
 
-    void delVertex();
     void delVertex(VertexView* vertexItem);
+    void deleteArc(vertexTuple *fromVT ,vertexTuple *toVt);
+    bool arcExist(vertexTuple *fromVT, vertexTuple *toVT);
 
-    void addArc();
-    void deleteArc();
-    bool arcExist();
+    void initializeBFS(vertexTuple *initialVertex );
+    void stepBFS();
 
     void createAdjMatrix();
-
-    void BFS(int indiceSource);
-
-    void DFS();
-
-    void dijkstra();
-
-    void bellman();
-
 
 };
 #endif // GRAPH_H

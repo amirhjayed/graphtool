@@ -16,7 +16,7 @@ class graphtool : public QMainWindow
     Q_OBJECT
 
 public:
-    enum mode {NA,addVertex,deleteVertex,addArc,deleteArc};
+    enum mode {NA,addVertex,deleteVertex,addArc,deleteArc,BFS,DFS,Dijkstra,Bellman_ford};
     mode currentMode;
     Ui::graphtool *ui;
     explicit graphtool(QWidget *parent = 0);
@@ -33,6 +33,14 @@ private slots:
     void on_actionDelete_arc_triggered();
 
     void on_actionNavigation_triggered();
+
+    void on_actionBFS_triggered();
+
+    void on_actionDfS_triggered();
+
+    void on_actionDijkstra_triggered();
+
+    void on_actionBellman_ford_triggered();
 
 signals:
     void changedMode(mode newMode);

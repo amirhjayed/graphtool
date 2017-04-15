@@ -1,11 +1,12 @@
- #include "canvas.h"
+#include "canvas.h"
 #include "graphtool.h"
 #include "ui_graphtool.h"
 #include "vertexview.h"
 #include "vertex.h"
 #include "graph.h"
 #include <tuple>
-#include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
+#include <QKeyEvent>
 #include <QDebug>
 
 using vertexSuccessor = tuple<Vertex*, int ,ArcView*>;
@@ -16,6 +17,7 @@ Canvas::Canvas(QWidget *parent) : QGraphicsView(parent)
 {
     scene = new QGraphicsScene();
     firstClick=true;
+    startedBFS=false;
     currentMode=NA;
     this->setSceneRect(50, 50, 350, 350);
     this->setScene(scene);
@@ -43,7 +45,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                 QPointF clickPos=mapToScene(event->pos());
                 VertexView *clickedItem=graphModel.getItem(clickPos);
                 if(clickedItem){
-                    clickedItem->setPosi(QPointF(0.0,0.0));
+                    //clickedItem->setPosi(QPointF(0.0,0.0));
                     graphModel.delVertex(clickedItem);
                     scene->removeItem(clickedItem);
                     scene->update();
@@ -71,15 +73,22 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                     QPointF toVertexPos=mapToScene(event->pos());
                     vertexTuple *clickedVertexTuple=graphModel.getVertexTuple(toVertexPos);
                     if(clickedVertexTuple){
-                        QPointF *toVertexCenter = std::get<1>(*clickedVertexTuple)->getPosPtr();
-                        QPointF *fromVertexCenter = std::get<1>(*fromVertexTuple)->getPosPtr();
-                        ArcView* arc=new ArcView(fromVertexCenter,toVertexCenter);
-                        scene->addItem(arc);
-                        scene->update();
-                        vertexSuccessor clickedSuccessor;
-                        std::get<0>(clickedSuccessor)=&std::get<0>(*fromVertexTuple);
-                        std::get<2>(clickedSuccessor)=arc;
-                        std::get<2>(*clickedVertexTuple).push_back(clickedSuccessor);
+                        if (!graphModel.arcExist(fromVertexTuple,clickedVertexTuple)){
+
+                            ArcView* arc=new ArcView(std::get<1>(*fromVertexTuple)->getPosPtr(),std::get<1>(*clickedVertexTuple)->getPosPtr());
+
+                            scene->addItem(arc);
+                            scene->update();
+                            vertexSuccessor clickedSuccessor;
+                            qDebug()<<"fel addarc: "<<&std::get<0>(*clickedVertexTuple);
+                            std::get<0>(clickedSuccessor)=&std::get<0>(*clickedVertexTuple);
+                            qDebug() <<"toVertex ptr "<<&std::get<0>(*clickedVertexTuple)<<" arc pointer is "<<arc;
+                            std::get<2>(clickedSuccessor)=arc;
+                            std::get<2>(*fromVertexTuple).push_back(clickedSuccessor);
+                        }
+                        else{
+                            qDebug()<<"arc exist";}
+
                     }
                     else{
                         qDebug()<<"no item clicked";
@@ -107,11 +116,16 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                     QPointF toVertexPos=mapToScene(event->pos());
                     vertexTuple *clickedVertexTuple=graphModel.getVertexTuple(toVertexPos);
                     if(clickedVertexTuple){
-                        ArcView *clickedSuccessor=graphModel.getArcView(fromVertexTuple,toVertexPos);
-                        if(clickedSuccessor){
-                            scene->removeItem(clickedSuccessor);
+                        ArcView *clickedSuccessorArc=graphModel.getArcView(fromVertexTuple,clickedVertexTuple);
+                        if(clickedSuccessorArc){
+                            graphModel.deleteArc(fromVertexTuple,clickedVertexTuple);
+                            scene->removeItem(clickedSuccessorArc);
+                            qDebug()<<"when deleted : "<<clickedSuccessorArc;
+                            clickedSuccessorArc=nullptr;
                             scene->update();
+
                         }
+                        scene->update();
                     }
                     else{
                         qDebug()<<"no item clicked";
@@ -121,6 +135,22 @@ void Canvas::mousePressEvent(QMouseEvent *event)
             }
         }
         /// FIN ARC///
+
+        /// BFS ///
+        if(currentMode==BFS){
+            QPointF clickedPos=mapToScene(event->pos());
+            if(event->button() == Qt::LeftButton ){
+                if(startedBFS == false){
+                    vertexTuple *clickedVertexTuple=graphModel.getVertexTuple(clickedPos);
+                    if(clickedVertexTuple){
+                        startedBFS = true ;
+                        qDebug()<<"BFS started";
+                        graphModel.initializeBFS(clickedVertexTuple);
+                        scene->update();
+                    }
+                }
+            }
+        }
 }
         /// MOVE ///
 void Canvas::mouseMoveEvent(QMouseEvent *event){
@@ -144,6 +174,25 @@ void Canvas::mouseMoveEvent(QMouseEvent *event){
                 }
             }
             update();
+        }
+    }
+}
+
+void Canvas::keyPressEvent(QKeyEvent *event){
+    if(currentMode == BFS ){
+        if(startedBFS==true){
+            if(event->key()==Qt::Key_Space){
+                qDebug()<<"Space bar clicked";
+                while(!graphModel.queue_BFS.empty() || false /*delete this*/){
+                    graphModel.stepBFS();
+                    startedBFS = false ;
+                }
+            }
+            if(event->key()==Qt::Key_Right){
+                qDebug()<<"Right button clicked";
+                graphModel.stepBFS();
+                scene->update();
+            }
         }
     }
 }
