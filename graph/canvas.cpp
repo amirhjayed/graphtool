@@ -80,7 +80,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                             scene->addItem(arc);
                             scene->update();
                             vertexSuccessor clickedSuccessor;
-                            qDebug()<<"fel addarc: "<<&std::get<0>(*clickedVertexTuple);
+                            qDebug()<<"fel addar: "<<&std::get<0>(*clickedVertexTuple);
                             std::get<0>(clickedSuccessor)=&std::get<0>(*clickedVertexTuple);
                             qDebug() <<"toVertex ptr "<<&std::get<0>(*clickedVertexTuple)<<" arc pointer is "<<arc;
                             std::get<2>(clickedSuccessor)=arc;
@@ -123,7 +123,6 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                             qDebug()<<"when deleted : "<<clickedSuccessorArc;
                             clickedSuccessorArc=nullptr;
                             scene->update();
-
                         }
                         scene->update();
                     }
@@ -145,7 +144,23 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                     if(clickedVertexTuple){
                         startedBFS = true ;
                         qDebug()<<"BFS started";
+                        graphModel.resetBFS();
                         graphModel.initializeBFS(clickedVertexTuple);
+                        scene->update();
+                    }
+                }
+            }
+        }
+        if(currentMode==DFS){
+            QPointF clickedPos=mapToScene(event->pos());
+            if(event->button() == Qt::LeftButton ){
+                if(startedDFS == false){
+                    vertexTuple *clickedVertexTuple=graphModel.getVertexTuple(clickedPos);
+                    if(clickedVertexTuple){
+                        startedDFS = true ;
+                        qDebug()<<"DFS started";
+                        graphModel.resetDFS();
+                        graphModel.initializeDFS(clickedVertexTuple);
                         scene->update();
                     }
                 }
@@ -183,18 +198,75 @@ void Canvas::keyPressEvent(QKeyEvent *event){
         if(startedBFS==true){
             if(event->key()==Qt::Key_Space){
                 qDebug()<<"Space bar clicked";
-                while(!graphModel.queue_BFS.empty() || false /*delete this*/){
-                    graphModel.stepBFS();
+                while(!graphModel.queue_BFS.empty()){
+                    if(graphModel.stepBFS()){
+                        ++graphModel.currentSuccessor;
+                    }
+                    scene->update();
                     startedBFS = false ;
                 }
             }
             if(event->key()==Qt::Key_Right){
                 qDebug()<<"Right button clicked";
-                graphModel.stepBFS();
+                if(!graphModel.queue_BFS.empty()){
+                    if(graphModel.stepBFS()){
+                        ++graphModel.currentSuccessor;
+                        qDebug()<<"it increment";
+                    }
+                }
+                else{
+                    startedBFS = false;
+                    qDebug()<<"BFS ended";
+                }
+            }
+            if(event->key()==Qt::Key_R){
+                startedBFS = false;
+                graphModel.resetBFS();
+            }
+        }
+        scene->update();
+    }
+    if(currentMode == DFS ){
+        if(startedDFS==true){
+            if(event->key()==Qt::Key_Space){
+                qDebug()<<"Space bar clicked";
+
+                while(!graphModel.stack_DFS.empty()){
+                    if(graphModel.stepDFS()){
+                        ++graphModel.currentSuccessor;
+                    }
+                    scene->update();
+                    startedDFS = false ;
+                }
+            }
+
+            if(event->key()==Qt::Key_Right){
+                qDebug()<<"Right button clicked";
+                if(!graphModel.stack_DFS.empty()){
+                    if(graphModel.stepDFS()){
+                        ++graphModel.currentSuccessor;
+                        qDebug()<<"it increment";
+                    }
+                }
+                else{
+                    startedDFS = false;
+                    qDebug()<<"DFS ended";
+                }
                 scene->update();
+            }
+            if(event->key()==Qt::Key_R){
+                startedDFS = false;
+                graphModel.resetDFS();
             }
         }
     }
+}
+
+void Canvas::reset(){
+    scene->clear();
+    scene->update();
+    Graph empty;
+    graphModel=empty;
 }
 
 /*void Canvas::mouseReleaseEvent(QMouseEvent *event){

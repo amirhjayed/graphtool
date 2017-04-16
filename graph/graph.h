@@ -9,6 +9,7 @@
 #include <utility>
 #include <tuple>
 #include <queue>
+#include <stack>
 #include "arcview.h"
 
 using vertexSuccessor = tuple<Vertex*, int ,ArcView*>;
@@ -21,13 +22,14 @@ class Graph
     unsigned date;
     unsigned ordre;
     matrix adjMatrix;
-    vertexTuple *currentTuple_BFS;
-    vector<vertexSuccessor>::iterator currentSuccessor_BFS;
-    vector<vertexSuccessor> *currentSuccessorVect_BFS;
+    vertexTuple *currentTuple;
+    vector<vertexSuccessor> *currentSuccessorVect;
 
 public:
     vertexVect vertexTuples;
     queue<vertexTuple*> queue_BFS ;
+    stack<vertexTuple*> stack_DFS ;
+    vector<vertexSuccessor>::iterator currentSuccessor;
 
     Graph();
     VertexView *getItem(QPointF clickPos);
@@ -47,8 +49,13 @@ public:
     void deleteArc(vertexTuple *fromVT ,vertexTuple *toVt);
     bool arcExist(vertexTuple *fromVT, vertexTuple *toVT);
 
+    void resetBFS();
     void initializeBFS(vertexTuple *initialVertex );
-    void stepBFS();
+    bool stepBFS();
+
+    void resetDFS();
+    void initializeDFS(vertexTuple *initialVertex);
+    bool stepDFS();
 
     void createAdjMatrix();
 

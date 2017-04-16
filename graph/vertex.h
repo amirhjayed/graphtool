@@ -9,8 +9,6 @@ class Vertex
 {
     Vertex *parent;
     unsigned distance  ;
-    unsigned debTime ;
-    unsigned endTime ;
     colors color ;
 public:
     Vertex();
@@ -18,14 +16,10 @@ public:
     Vertex(const Vertex &);
 
     unsigned getDistance(){return distance;}
-    unsigned getDebTime(){return debTime;}
-    unsigned getEndTime(){return endTime;}
     Vertex *getParent(){return parent;}
     colors getColor(){return color;}
 
     void setDistance(unsigned d){distance=d;}
-    void setDebTime(unsigned dt){debTime=dt;}
-    void setEndTime(unsigned et){endTime=et;}
     void setColor(colors clr){color=clr;}
     void setParent(Vertex *p){parent=p;}
 

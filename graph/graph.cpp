@@ -6,6 +6,7 @@
 
 
 Graph::Graph(){
+    date=0;
 }
 int distanceBetween(QPointF pos1,QPointF pos2){
     int dx=pow(pos1.x()-pos2.x(),2.0);
@@ -141,7 +142,7 @@ vertexTuple *Graph::getTupleFromVertex(Vertex *vertex){
     }
     return nullptr;
 }
-void Graph::initializeBFS(vertexTuple *initialVertex){
+void Graph::resetBFS(){
     queue<vertexTuple*> empty;
     std::swap( queue_BFS, empty );     //empty the queue
     int MAX_INT = std::numeric_limits<int>::max();
@@ -149,26 +150,36 @@ void Graph::initializeBFS(vertexTuple *initialVertex){
         std::get<0>(vt).setColor(white);
         std::get<0>(vt).setDistance(MAX_INT);
         std::get<0>(vt).setParent(nullptr);
+        std::get<1>(vt)->setColor(Qt::black);
+        std::get<1>(vt)->setWidth(2);
+        for(auto &st : std::get<2>(vt)){
+            std::get<2>(st)->setColor(Qt::black);
+            std::get<2>(st)->setWidth(1);
+            std::get<2>(st)->BFSflag=false;
+        }
     }
+}
+void Graph::initializeBFS(vertexTuple *initialVertex){
     std::get<0>(*initialVertex).setColor(grey);
     std::get<0>(*initialVertex).setDistance(0);
     std::get<1>(*initialVertex)->setColor(Qt::green);
     std::get<1>(*initialVertex)->setWidth(3);
-    currentSuccessor_BFS=std::get<2>(*initialVertex).begin();
-    currentTuple_BFS=initialVertex;
-    currentSuccessorVect_BFS=&std::get<2>(*initialVertex);
+    currentTuple=initialVertex;
+    currentSuccessorVect=&std::get<2>(*initialVertex);
+    currentSuccessor=currentSuccessorVect->begin();
     queue_BFS.push(initialVertex);
 }
 
-void Graph::stepBFS(){
+bool Graph::stepBFS(){
     qDebug()<<"entré stepBFS";
-    if(currentTuple_BFS){
+    if(currentTuple){
         qDebug()<<"currentTuple BFS!=null";
-        Vertex *currentVertex=&std::get<0>(*currentTuple_BFS);
-        vertexTuple *CurrentSuccessor_vT=getTupleFromVertex(std::get<0>(*currentSuccessor_BFS));
-        if(!currentSuccessorVect_BFS->empty()){ // test if succVect is empty
+        qDebug()<<"queue size "<<queue_BFS.size();
+        if(currentSuccessor!=currentSuccessorVect->end()){ // test if succVect is fully visited
+            Vertex *currentVertex=&std::get<0>(*currentTuple);
+            vertexTuple *CurrentSuccessor_vT=getTupleFromVertex(std::get<0>(*currentSuccessor));
             qDebug()<<"currentSuccVect non vide";
-            if(std::get<0>(*currentSuccessor_BFS)->getColor() == white ){                // if successor never visited
+            if(std::get<0>(*currentSuccessor)->getColor() == white ){                // if successor never visited
                 queue_BFS.push(CurrentSuccessor_vT);                                    // push it in the queue
                 qDebug()<<"it's white";
                 std::get<0>(*CurrentSuccessor_vT).setColor(grey);
@@ -176,30 +187,105 @@ void Graph::stepBFS(){
                 std::get<0>(*CurrentSuccessor_vT).setDistance(currentVertex->getDistance()+1);
                 std::get<1>(*CurrentSuccessor_vT)->setColor(Qt::green);
                 std::get<1>(*CurrentSuccessor_vT)->setWidth(3);
-                std::get<2>(*currentSuccessor_BFS)->setColor(Qt::green);
-                std::get<2>(*currentSuccessor_BFS)->setWidth(2);
+                std::get<2>(*currentSuccessor)->setColor(Qt::green);
+                std::get<2>(*currentSuccessor)->setWidth(2);
+                std::get<2>(*currentSuccessor)->BFSflag=true;
             }
-            qDebug()<<"increment iterator";
-            ++currentSuccessor_BFS;
+            return true;
         }
         else{ //currentSuccessorVect est vidé
             qDebug()<<"currentSuccessorVect est vidé";
-            std::get<1>(*currentTuple_BFS)->setColor(Qt::red);
-            currentTuple_BFS=queue_BFS.front();
-            currentSuccessorVect_BFS=&std::get<2>(*currentTuple_BFS);
-            currentSuccessor_BFS=currentSuccessorVect_BFS->begin();
-            queue_BFS.pop();
+            std::get<1>(*currentTuple)->setColor(Qt::red);
+            for(auto &sT:*currentSuccessorVect){
+                if(std::get<2>(sT)->BFSflag)
+                    std::get<2>(sT)->setColor(Qt::red);
+            }
+
+                queue_BFS.pop();
+            if(!queue_BFS.empty()){
+                currentTuple=queue_BFS.front();
+                currentSuccessorVect=&std::get<2>(*currentTuple);
+                currentSuccessor=currentSuccessorVect->begin();
+            }
+            else{
+                qDebug()<<"currentTuple = nullptr";
+                currentTuple=nullptr;
+            }
+            return false;
+        }
+    }
+    else{
+
+        return false;
+    }
+}
+
+void Graph::resetDFS(){
+    date=0;
+    stack<vertexTuple*> empty;
+    std::swap(stack_DFS, empty);
+    for (vertexTuple &vt : vertexTuples){
+        std::get<0>(vt).setColor(white);
+        std::get<0>(vt).setParent(nullptr);
+        std::get<1>(vt)->setColor(Qt::black);
+        std::get<1>(vt)->setDebTime(0);
+        std::get<1>(vt)->setEndTime(0);
+        std::get<1>(vt)->setWidth(2);
+        for(auto &st : std::get<2>(vt)){
+            std::get<2>(st)->setColor(Qt::black);
+            std::get<2>(st)->setWidth(1);
+            std::get<2>(st)->DFSflag=false;
         }
     }
 }
 
+void Graph::initializeDFS(vertexTuple *initialVertex){
+    std::get<0>(*initialVertex).setColor(grey);
+    std::get<1>(*initialVertex)->setDebTime(++date);
+    std::get<1>(*initialVertex)->setColor(Qt::green);
+    std::get<1>(*initialVertex)->setWidth(3);
+    currentTuple=initialVertex;
+    currentSuccessorVect=&std::get<2>(*initialVertex);
+    currentSuccessor=currentSuccessorVect->begin();
+    stack_DFS.push(initialVertex);
+}
 
-
-
-
-
-
-
-
-
-
+bool Graph::stepDFS(){
+    qDebug()<<"entré stepDFS";
+    if(currentTuple != nullptr){
+        if(currentSuccessor!=currentSuccessorVect->end()){
+            vertexTuple *CurrentTuple=getTupleFromVertex(std::get<0>(*currentSuccessor));
+            if(std::get<0>(*CurrentTuple).getColor() == white ){
+                std::get<0>(*CurrentTuple).setColor(grey);
+                std::get<1>(*CurrentTuple)->setDebTime(++date);
+                std::get<1>(*CurrentTuple)->setColor(Qt::green);
+                std::get<1>(*CurrentTuple)->setWidth(3);
+                std::get<2>(*currentSuccessor)->setColor(Qt::green);
+                std::get<2>(*currentSuccessor)->setWidth(2);
+                std::get<2>(*currentSuccessor)->DFSflag=true;
+                currentSuccessorVect=&std::get<2>(*CurrentTuple);
+                currentSuccessor=currentSuccessorVect->begin();
+                stack_DFS.push(CurrentTuple);
+            }
+            else{// the successor was visited before (his color is not white)
+                qDebug()<<"step DFS returned true";
+                return true;
+            }
+        }
+        else{
+            qDebug()<<"currentSuccVect is empty";
+            currentTuple=stack_DFS.top();
+            std::get<0>(*currentTuple).setColor(black);
+            std::get<1>(*currentTuple)->setEndTime(++date);
+            std::get<1>(*currentTuple)->setColor(Qt::red);
+            stack_DFS.pop();
+            currentTuple=nullptr;
+        }
+    }
+    else{
+        currentTuple=stack_DFS.top();
+        currentSuccessorVect=&std::get<2>(*currentTuple);
+        currentSuccessor=currentSuccessorVect->begin();
+    }
+    return false;
+}

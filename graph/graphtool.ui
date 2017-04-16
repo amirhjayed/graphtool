@@ -60,6 +60,7 @@
    <addaction name="separator"/>
    <addaction name="actionMatrice_d_adjacence"/>
    <addaction name="separator"/>
+   <addaction name="actionReset"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="toolBar">
@@ -202,6 +203,14 @@
    </property>
    <property name="toolTip">
     <string>Navigation mode to move and select objects</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear the canvas</string>
    </property>
   </action>
  </widget>

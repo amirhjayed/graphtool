@@ -14,7 +14,14 @@ class ArcView : public QGraphicsItem
     QPointF *toPos;
     QColor arcColor;
     int arcWidth;
+
 public:
+
+    bool BFSflag;
+    bool DFSflag;
+    bool dijkstraFlag;
+    bool bellman_fordFlag;
+
     ArcView();
     ArcView(QPointF *fp, QPointF *tp, QColor lineColor=Qt::black, int width=1);
 

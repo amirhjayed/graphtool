@@ -42,6 +42,8 @@ private slots:
 
     void on_actionBellman_ford_triggered();
 
+    void on_actionReset_triggered();
+
 signals:
     void changedMode(mode newMode);
 private:
