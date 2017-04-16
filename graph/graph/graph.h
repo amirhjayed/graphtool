@@ -22,10 +22,12 @@ class Graph
     unsigned ordre;
     matrix adjMatrix;
     vertexTuple *currentTuple_BFS;
+    vector<vertexSuccessor> *currentSuccessorVect_BFS;
 
 public:
     vertexVect vertexTuples;
-    queue<vertexTuple*> queueBFS ;
+    queue<vertexTuple*> queue_BFS ;
+    vector<vertexSuccessor>::iterator currentSuccessor_BFS;
 
     Graph();
     VertexView *getItem(QPointF clickPos);
@@ -34,7 +36,7 @@ public:
     QPointF CollisionMove(QPointF newVertexPos);
     QPointF avoidCollisonPoint(QPointF p1, QPointF p2);
     ArcView *getArcView(vertexTuple *fromVertexTuple, vertexTuple *toVertexPos);
-    //vertexTuple *getTupleFromVertex(Vertex* vertex);
+    vertexTuple *getTupleFromVertex(Vertex* vertex);
 
     unsigned getDate(){return date;}
     unsigned getOrdre(){return ordre;}
@@ -45,8 +47,9 @@ public:
     void deleteArc(vertexTuple *fromVT ,vertexTuple *toVt);
     bool arcExist(vertexTuple *fromVT, vertexTuple *toVT);
 
+    void resetBFS();
     void initializeBFS(vertexTuple *initialVertex );
-    void stepBFS();
+    bool stepBFS();
 
     void createAdjMatrix();
 

@@ -138,7 +138,6 @@ void Canvas::mousePressEvent(QMouseEvent *event)
 
         /// BFS ///
         if(currentMode==BFS){
-
             QPointF clickedPos=mapToScene(event->pos());
             if(event->button() == Qt::LeftButton ){
                 if(startedBFS == false){
@@ -146,6 +145,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                     if(clickedVertexTuple){
                         startedBFS = true ;
                         qDebug()<<"BFS started";
+                        graphModel.resetBFS();
                         graphModel.initializeBFS(clickedVertexTuple);
                         scene->update();
                     }
@@ -184,17 +184,41 @@ void Canvas::keyPressEvent(QKeyEvent *event){
         if(startedBFS==true){
             if(event->key()==Qt::Key_Space){
                 qDebug()<<"Space bar clicked";
-                while(!graphModel.queueBFS.empty() || false /*delete this*/){
-                    //graphModel.stepBFS();
-                    //startedBFS = false ;
+                while(!graphModel.queue_BFS.empty()){
+                    if(graphModel.stepBFS()){
+                        ++graphModel.currentSuccessor_BFS;
+                    }
+                    scene->update();
+                    startedBFS = false ;
                 }
             }
             if(event->key()==Qt::Key_Right){
                 qDebug()<<"Right button clicked";
-                //graphModel.stepBFS();
+                if(!graphModel.queue_BFS.empty()){
+                    if(graphModel.stepBFS()){
+                        ++graphModel.currentSuccessor_BFS;
+                        qDebug()<<"it increment";
+                    }
+                }
+                else{
+                    startedBFS = false;
+                    qDebug()<<"BFS ended";
+                }
+                scene->update();
+            }
+            if(event->key()==Qt::Key_R){
+                graphModel.resetBFS();
+                scene->update();
             }
         }
     }
+}
+
+void Canvas::reset(){
+    scene->clear();
+    scene->update();
+    Graph empty;
+    graphModel=empty;
 }
 
 /*void Canvas::mouseReleaseEvent(QMouseEvent *event){

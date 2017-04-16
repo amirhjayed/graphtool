@@ -14,6 +14,7 @@ ArcView::ArcView(QPointF *fp, QPointF *tp, QColor lineColor, int width)
     toPos=tp;
     arcColor=lineColor;
     arcWidth=width;
+    BFSflag=false;
 }
 
 QRectF ArcView::boundingRect() const{

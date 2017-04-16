@@ -14,6 +14,7 @@ class ArcView : public QGraphicsItem
     QPointF *toPos;
     QColor arcColor;
     int arcWidth;
+    bool BFSflag;
 public:
     ArcView();
     ArcView(QPointF *fp, QPointF *tp, QColor lineColor=Qt::black, int width=1);
@@ -26,10 +27,12 @@ public:
     void setColor(QColor color){arcColor=color;}
     void setFromPos(QPointF p){*fromPos=p;}
     void setToPos(QPointF p){*toPos=p;}
+    void setBFSflag(bool f){BFSflag=f;}
     QPointF getFromPos(){return *fromPos;}
     QPointF getToPos(){return *toPos;}
     QColor getColor(){return arcColor;}
     int getWidth(){return arcWidth;}
+    bool getBFSflag(){return BFSflag;}
 
 };
 

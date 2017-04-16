@@ -17,7 +17,7 @@ public:
     Vertex(Vertex* ,unsigned, unsigned);
     Vertex(const Vertex &);
 
-    unsigned getDistancce(){return distance;}
+    unsigned getDistance(){return distance;}
     unsigned getDebTime(){return debTime;}
     unsigned getEndTime(){return endTime;}
     Vertex *getParent(){return parent;}
