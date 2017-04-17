@@ -16,6 +16,7 @@ using vertexVect = vector<vertexTuple>;
 Canvas::Canvas(QWidget *parent) : QGraphicsView(parent)
 {
     scene = new QGraphicsScene();
+    VertexView::vertexID=0;
     firstClick=true;
     startedBFS=false;
     currentMode=NA;
@@ -50,6 +51,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                     scene->removeItem(clickedItem);
                     scene->update();
                 }
+                delete clickedItem;
             }
         }
         /// FIN VERTEX ///
@@ -76,13 +78,11 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                         if (!graphModel.arcExist(fromVertexTuple,clickedVertexTuple)){
 
                             ArcView* arc=new ArcView(std::get<1>(*fromVertexTuple)->getPosPtr(),std::get<1>(*clickedVertexTuple)->getPosPtr());
-
+                            arc->setZValue(-99999999);
                             scene->addItem(arc);
                             scene->update();
                             vertexSuccessor clickedSuccessor;
-                            qDebug()<<"fel addar: "<<&std::get<0>(*clickedVertexTuple);
                             std::get<0>(clickedSuccessor)=&std::get<0>(*clickedVertexTuple);
-                            qDebug() <<"toVertex ptr "<<&std::get<0>(*clickedVertexTuple)<<" arc pointer is "<<arc;
                             std::get<2>(clickedSuccessor)=arc;
                             std::get<2>(*fromVertexTuple).push_back(clickedSuccessor);
                         }
@@ -260,6 +260,7 @@ void Canvas::keyPressEvent(QKeyEvent *event){
             }
         }
     }
+    scene->update();
 }
 
 void Canvas::reset(){

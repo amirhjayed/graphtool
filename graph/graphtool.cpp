@@ -77,6 +77,7 @@ void graphtool::on_actionAdd_arc_triggered()
     myCanvas->startedBellman_ford = false;
     myCanvas->startedBFS = false;
     myCanvas->graphModel.resetBFS();
+    myCanvas->graphModel.resetDFS();
     myCanvas->scene->update();
 
     ui->actionAdd_arc->setChecked(true);
@@ -223,7 +224,7 @@ void graphtool::on_actionBellman_ford_triggered(){
 
 void graphtool::on_actionReset_triggered(){
     QMessageBox box;
-    box.setText("Do you really ?");
+    box.setText("Warning! This will remove everything");
     box.setStandardButtons(QMessageBox::Cancel|QMessageBox::Reset);
     int ret = box.exec();
     if(ret == QMessageBox::Reset)

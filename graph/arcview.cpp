@@ -44,7 +44,7 @@ void ArcView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
             line.translate(20*cos(radangle),-20*sin(radangle));
             painter->drawLine(line);
             QLineF flech1,flech2;
-            QPointF centreDecale(line.center().x()-10*cos(radangle),line.center().y()+10*sin(radangle));
+            QPointF centreDecale(line.center().x()-5*cos(radangle),line.center().y()+5*sin(radangle));
             flech1.setP1(centreDecale);
             flech1.setLength(10.0);
             flech1.setAngle(angle+150.0);

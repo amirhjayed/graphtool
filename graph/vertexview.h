@@ -14,9 +14,12 @@ class VertexView : public QGraphicsItem
     int width;
     unsigned debTime;
     unsigned endTime;
+    unsigned id;
 public:
+    static unsigned vertexID;
     QRectF boundingRect() const;
     VertexView(QPointF position, std::string name="", QColor _color=Qt::black, int _width = 2,unsigned _debTime=0,unsigned _endTime=0);
+    ~VertexView();
 
     QPointF getPosi(){return posi;}
     QPointF* getPosPtr(){return &posi;}
@@ -26,6 +29,7 @@ public:
     std::string getName(){return name;}
     unsigned getDebTime(){return debTime;}
     unsigned getEndTime(){return endTime;}
+    unsigned getID(){return id;}
 
     void setPosi(QPointF pos){posi=pos;}
     void setName(std::string _name){name=_name;}
@@ -33,6 +37,7 @@ public:
     void setWidth(int w){width=w;}
     void setDebTime(unsigned debT){debTime=debT;}
     void setEndTime(unsigned endT){endTime=endT;}
+    void setID(unsigned _id){id=_id;}
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QPainterPath shape () const;

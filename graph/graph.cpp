@@ -278,6 +278,10 @@ bool Graph::stepDFS(){
             std::get<0>(*currentTuple).setColor(black);
             std::get<1>(*currentTuple)->setEndTime(++date);
             std::get<1>(*currentTuple)->setColor(Qt::red);
+            for(auto &sT:std::get<2>(*currentTuple)){
+                if(std::get<2>(sT)->DFSflag)
+                    std::get<2>(sT)->setColor(Qt::red);
+            }
             stack_DFS.pop();
             currentTuple=nullptr;
         }
