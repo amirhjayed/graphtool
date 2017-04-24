@@ -2,6 +2,7 @@
 #include <QLineF>
 #include <QDebug>
 #include <cmath>
+#include <QGraphicsSceneMouseEvent>
 #include "arcview.h"
 
 ArcView::ArcView(){
@@ -18,42 +19,89 @@ ArcView::ArcView(QPointF *fp, QPointF *tp, QColor lineColor, int width)
     DFSflag=false;
     dijkstraFlag=false;
     bellman_fordFlag=false;
+    setFlag(ItemIsSelectable);
+    arcWeight = 0 ;
+    is2wayArc=false;
+    isFirst=true;
+    shapePath.moveTo(*fromPos);
+    shapePath.lineTo(*toPos);
 }
 
 QRectF ArcView::boundingRect() const{
     if(*fromPos!=*toPos)
-        return QRectF(*fromPos,*toPos);
+        return QRectF(*fromPos,*toPos).normalized();
     else
-        return QRectF(*fromPos+QPointF(-20,-20),*toPos+QPointF(20,20));
+        return QRectF(*fromPos+QPointF(-20,-20),*toPos+QPointF(20,20)).normalized();
 }
 
 void ArcView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-    /*if(*fromPos==QPointF(0.0,0.0) || *toPos == QPointF(0.0,0.0)){
-        qDebug()<<"faza bhima fel arcview";
-        painter->drawPoint(0,0);
-    }*/
-    //else{
         QPen pen(arcColor);
         pen.setWidth(arcWidth);
         painter->setPen(pen);
         if(*fromPos!=*toPos){
             QLineF line(*fromPos,*toPos);
             qreal angle=line.angle();
+
             double radangle=angle*M_PI/180;
-            line.setLength(line.length()-40);
-            line.translate(20*cos(radangle),-20*sin(radangle));
-            painter->drawLine(line);
+            if(is2wayArc==false){
+                line.setLength(line.length()-40);
+                line.translate(20*cos(radangle),-20*sin(radangle));
+                QPolygonF poly;
+                poly << line.p1()+QPointF(3*sin(radangle),3*cos(radangle));
+                poly << line.p1()+QPointF(-3*sin(radangle),-3*cos(radangle));
+                poly << line.p2()+QPointF(-3*sin(radangle),-3*cos(radangle));
+                poly << line.p2()+QPointF(3*sin(radangle),3*cos(radangle));
+                shapePath.addPolygon(poly);
+                painter->drawLine(line);
+            }
+            else{
+                int a(8),b(38),c(20);
+                qDebug()<<"is 2 way";
+                if(isFirst){
+                    qDebug()<<"isFirst";
+                    line.translate(-a*sin(radangle),-a*cos(radangle));//perpendiculaire
+                    line.setLength(line.length()-b);
+                    line.translate(c*cos(radangle),-c*sin(radangle));  //horizontal
+                    painter->drawLine(line);
+                    QPolygonF poly;
+                    poly << line.p1()+QPointF(3*sin(radangle),3*cos(radangle));
+                    poly << line.p1()+QPointF(-3*sin(radangle),-3*cos(radangle));
+                    poly << line.p2()+QPointF(-3*sin(radangle),-3*cos(radangle));
+                    poly << line.p2()+QPointF(3*sin(radangle),3*cos(radangle));
+                    shapePath.addPolygon(poly);
+                }
+                else{
+                    qDebug()<<"isSecond";
+                    line.translate(-a*sin(radangle),-a*cos(radangle));
+                    line.setLength(line.length()-b);
+                    line.translate(c*cos(radangle),-c*sin(radangle));  //horizontal
+                    painter->drawLine(line);
+                    QPolygonF poly;
+                    poly << line.p1()+QPointF(3*sin(radangle),3*cos(radangle));
+                    poly << line.p1()+QPointF(-3*sin(radangle),-3*cos(radangle));
+                    poly << line.p2()+QPointF(-3*sin(radangle),-3*cos(radangle));
+                    poly << line.p2()+QPointF(3*sin(radangle),3*cos(radangle));
+                    shapePath.addPolygon(poly);
+                }
+            }
             QLineF flech1,flech2;
-            QPointF centreDecale(line.center().x()-5*cos(radangle),line.center().y()+5*sin(radangle));
-            flech1.setP1(centreDecale);
-            flech1.setLength(10.0);
-            flech1.setAngle(angle+150.0);
-            flech2.setP1(centreDecale);
-            flech2.setAngle(angle-150.0);
-            flech2.setLength(10.0);
+            flech1.setP1(line.center());
+            flech1.setLength(8.0);
+            flech1.setAngle(angle+160.0);
+            flech2.setP1(line.center());
+            flech2.setAngle(angle-160.0);
+            flech2.setLength(8.0);
             painter->drawLine(flech1);
             painter->drawLine(flech2);
+            if(arcWeight!=0){
+                QString weight_Qstr = QString::fromStdString(std::to_string(arcWeight));
+                pen.setWidth(2);
+                pen.setColor(Qt::darkCyan);
+                painter->setPen(pen);
+                painter->drawText(line.center().x(),line.center().y(),weight_Qstr);
+            }
         }
+
         else{
             QPen pen(arcColor);
             pen.setWidth(arcWidth);
@@ -72,11 +120,8 @@ void ArcView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
             painter->drawLine(flech1);
             painter->drawLine(flech2);
         }
-    //}
 }
 
 QPainterPath ArcView::shape() const{
-    QPainterPath path;
-    path.addRect(boundingRect());
-    return path;
+    return shapePath;
 }

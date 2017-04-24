@@ -29,13 +29,19 @@ SOURCES += main.cpp\
     vertexview.cpp \
     arcview.cpp \
     canvas.cpp \
-    graph.cpp
+    graph.cpp \
+    arcweightedit.cpp \
+    vertexnameedit.cpp
 
 HEADERS  += graphtool.h \
     vertex.h \
     vertexview.h \
     arcview.h \
     canvas.h \
-    graph.h
+    graph.h \
+    arcweightedit.h \
+    vertexnameedit.h
 
-FORMS    += graphtool.ui
+FORMS    += graphtool.ui \
+    arcweightedit.ui \
+    vertexnameedit.ui

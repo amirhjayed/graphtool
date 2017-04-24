@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <string>
 #include <QTextItem>
+#include <QGraphicsSceneMouseEvent>
 #include "graphtool.h"
 
 unsigned VertexView::vertexID;
@@ -25,12 +26,11 @@ VertexView::VertexView(QPointF pos, std::string _name, QColor _color, int _width
     width=_width;
     debTime=_debTime;
     endTime=_endTime;
+    vertexDeg=0;
 }
 
-VertexView::~VertexView()
-{
-    --vertexID;
-    qDebug()<<vertexID;
+VertexView::~VertexView(){
+
 }
 
 
@@ -57,8 +57,11 @@ void VertexView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         QString qEndT=QString::fromStdString(str);
         painter->drawText(posi+QPoint(dec*(-2),33),qEndT);
     }
-        QString qText=QString::fromStdString(text);
-        painter->drawText(posi+QPoint(decalage,5),qText);
+    pen.setColor(color);
+    pen.setWidth(width);
+    painter->setPen(pen);
+    QString qText=QString::fromStdString(text);
+    painter->drawText(posi+QPoint(decalage,5),qText);
 }
 
 

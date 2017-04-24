@@ -2,9 +2,10 @@
 #include <cmath>
 #include <QDebug>
 #include <limits>
+#include <queue>
 #include "vertexview.h"
 
-
+QColor colorPalette[4]={ Qt::red ,Qt::blue,Qt::darkGreen};
 Graph::Graph(){
     date=0;
 }
@@ -61,7 +62,6 @@ ArcView *Graph::getArcView(vertexTuple *fromVertexTuple, vertexTuple* toVertexTu
     Vertex *toVertex = &std::get<0>(*toVertexTuple);
     qDebug()<<toVertex;
     for(auto it= successorVect.begin();it!=successorVect.end();++it){
-        qDebug()<<"fost el boucle: successorVertexPtr : "<<std::get<0>(*it)<<"successor Arc View ptr :"<< std::get<2>(*it);
     }
     for(auto it= successorVect.begin();it!=successorVect.end();++it){
         qDebug()<<(std::get<0>(*it) == toVertex) ;
@@ -70,7 +70,6 @@ ArcView *Graph::getArcView(vertexTuple *fromVertexTuple, vertexTuple* toVertexTu
             }
 
         }
-    qDebug()<<"getArcView returned a nullptr";
     return nullptr;
 }
 
@@ -103,8 +102,6 @@ void Graph::deleteArc(vertexTuple *fromVT, vertexTuple *toVT){
     if(!successorVect->empty()){
         successorVect->erase(std::remove(successorVect->begin(),successorVect->end(),VT));
     }
-    else
-        qDebug()<<"successor Vect is empty";
 }
 
 bool Graph::arcExist(vertexTuple *fromVT, vertexTuple *toVT){
@@ -115,11 +112,9 @@ bool Graph::arcExist(vertexTuple *fromVT, vertexTuple *toVT){
         findResult = std::find(successorVect->begin(),successorVect->end(),VT);
     }
     if (findResult==successorVect->end()){
-        qDebug()<<"arcExist returned false(arc n'esiste pas)";
         return false;
     }
     else {
-        qDebug()<<"arcExist returned true";
         return true;
     }
 
@@ -195,10 +190,10 @@ bool Graph::stepBFS(){
         }
         else{ //currentSuccessorVect est vidé
             qDebug()<<"currentSuccessorVect est vidé";
-            std::get<1>(*currentTuple)->setColor(Qt::red);
+            std::get<1>(*currentTuple)->setColor(colorPalette[std::get<0>(*currentTuple).getDistance()%3]);
             for(auto &sT:*currentSuccessorVect){
                 if(std::get<2>(sT)->BFSflag)
-                    std::get<2>(sT)->setColor(Qt::red);
+                    std::get<2>(sT)->setColor(colorPalette[std::get<0>(*currentTuple).getDistance()%3]);
             }
 
                 queue_BFS.pop();
@@ -292,4 +287,110 @@ bool Graph::stepDFS(){
         currentSuccessor=currentSuccessorVect->begin();
     }
     return false;
+}
+
+void Graph::resetDijkstra(){
+    stack<vertexTuple*> empty;
+    std::swap(stack_Dijkstra, empty);
+    int MAX_INT = std::numeric_limits<int>::max();
+    for (vertexTuple &vt : vertexTuples){
+        std::get<0>(vt).setParent(nullptr);
+        std::get<0>(vt).setDistance(MAX_INT);
+        std::get<1>(vt)->setColor(Qt::black);
+        std::get<1>(vt)->setWidth(2);
+        for(auto &st : std::get<2>(vt)){
+            std::get<2>(st)->setColor(Qt::black);
+            std::get<2>(st)->setWidth(1);
+            std::get<2>(st)->dijkstraFlag=false;
+        }
+    }
+}
+
+struct cmp {
+    bool operator() (vertexTuple *v1,vertexTuple *v2)  {
+        qDebug()<<"in cmp"<<v1<<"  "<<v2;
+        return std::get<0>(*v1).getDistance()>std::get<0>(*v2).getDistance();
+    }
+};
+void Graph::dijkstra(vertexTuple *initialVertex){
+    std::priority_queue<vertexTuple*,std::vector<vertexTuple*>,cmp> activeVertices; // E //
+    std::get<0>(*initialVertex).setDistance(0);
+    for(vertexTuple &v:vertexTuples)
+        activeVertices.push(&v);
+    while(!activeVertices.empty()){
+        vertexTuple* minVertex = activeVertices.top();
+        activeVertices.pop();
+        for(vertexSuccessor &vs:std::get<2>(*minVertex)){
+            Vertex *V = std::get<0>(vs);
+            Vertex *U = &std::get<0>(*minVertex);
+            unsigned newDistance = U->getDistance()+std::get<2>(vs)->getWeight();
+            if(V->getDistance()>newDistance){
+                V->setDistance(newDistance);
+                V->setParent(U);
+            }
+        }
+    }
+}
+bool Graph::runDijkstra(vertexTuple *initialVertex, vertexTuple *destinationVertex){
+    dijkstra(initialVertex);
+    if(std::get<0>(*destinationVertex).getParent()!=nullptr){
+        vertexTuple *vt=destinationVertex;
+        while(vt!=nullptr){
+            stack_Dijkstra.push(vt);
+            vt=getTupleFromVertex(std::get<0>(*vt).getParent());
+        }
+        qDebug()<<"path exists";
+        return true ;
+    }
+    else{
+        qDebug()<<"no path ";
+        return false;
+    }
+}
+
+void Graph::stepDijkstra(){
+    vertexTuple* pathTuple=stack_Dijkstra.top();
+    stack_Dijkstra.pop();
+    VertexView *pathItem=std::get<1>(*pathTuple);
+    pathItem->setColor(Qt::red);
+    pathItem->setWidth(3);
+    for(vertexSuccessor &vs:std::get<2>(*pathTuple)){
+        if(!stack_Dijkstra.empty()){
+            if(getTupleFromVertex(std::get<0>(vs))==stack_Dijkstra.top()){
+                std::get<2>(vs)->setColor(Qt::red);
+                std::get<2>(vs)->setWidth(2);
+
+            }
+        }
+    }
+}
+
+unsigned **Graph::calculateAdjMatrix() {
+    adjMatrix = new unsigned*[Ordre()] ;
+    for(unsigned i = 0; i < Ordre(); i++){
+        adjMatrix[i] = new unsigned[Ordre()] ;
+    }
+    for(unsigned i = 0 ; i<Ordre(); i++)
+        for(unsigned j = 0 ; j<Ordre(); j++)
+            adjMatrix[i][j] = 0 ;
+
+    for ( unsigned vertexNumber = 0 ; vertexNumber < Ordre() ; vertexNumber++ ) {
+        vector<vertexSuccessor>& vsucc = std::get<2>(vertexTuples[vertexNumber]) ;
+        for(unsigned i = 0 ; i < vsucc.size();i++) {
+           adjMatrix[indexOf(std::get<0>(vsucc[i]))][vertexNumber] = 1 ;
+        }
+    }
+    return adjMatrix ;
+}
+
+
+int Graph::indexOf(Vertex* vertex) {
+
+    for(unsigned i = 0 ; i < Ordre() ; i++) {
+        Vertex& refVertex =  std::get<0>(vertexTuples[i]) ;
+        if(vertex == &refVertex)
+            return i ;
+    }
+    return -1 ;
+
 }

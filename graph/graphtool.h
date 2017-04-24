@@ -44,6 +44,8 @@ private slots:
 
     void on_actionReset_triggered();
 
+    void on_actionMatrice_d_adjacence_triggered();
+
 signals:
     void changedMode(mode newMode);
 private:

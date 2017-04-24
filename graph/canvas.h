@@ -1,8 +1,10 @@
-#ifndef CANVAS_H
+ #ifndef CANVAS_H
 #define CANVAS_H
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include "graph.h"
+#include "vertexnameedit.h"
+#include "arcweightedit.h"
 #include "vertex.h"
 
 class Canvas : public QGraphicsView
@@ -14,17 +16,21 @@ public:
     bool startedDijkstra;
     bool startedBellman_ford;
 
+    bool pathExist;
+
     QGraphicsScene *scene;
+    VertexNameEdit *vne ;
+    ArcWeightEdit *awe;
     Graph graphModel;
 
     explicit Canvas(QWidget *parent = 0);
     enum mode {NA,addVertex,deleteVertex,addArc,deleteArc,BFS,DFS,Dijkstra,Bellman_ford};
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
     void reset();
-    //void mouseReleaseEvent(QMouseEvent *event);
     void scrollContentsBy(int,int);
     ~Canvas();
 public slots:
@@ -34,5 +40,7 @@ private:
     QPointF fromVertexPos;
     bool firstClick;
     vertexTuple *fromVertexTuple;
+signals:
+    bool is2way();
 };
 #endif // CANVAS_H
